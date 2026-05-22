@@ -7,6 +7,7 @@ defmodule ZcashExplorerWeb.PageControllerTest do
     assert body =~ "NU7-rc0 Testnet"
     assert body =~ "join-nu7-testnet.sh"
     assert body =~ ~s(href="/explorer")
+    refute body =~ "testnet coins"
   end
 
   test "GET /explorer/rpc", %{conn: conn} do

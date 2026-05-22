@@ -15,11 +15,13 @@ defmodule ZcashExplorer.RpcEndpointsTest do
         KRESKO_PAYLOAD_DIR
         KRESKO_RPC_CONFIG_PATH
         KRESKO_CONFIG_PATH
+        KRESKO_RPC_PORT
       )
 
     previous_env = Map.new(env_names, &{&1, System.get_env(&1)})
 
     Enum.each(env_names, &System.delete_env/1)
+    Cachex.del(:app_cache, "zcash_nodes")
 
     tmp_dir =
       Path.join(
@@ -45,6 +47,7 @@ defmodule ZcashExplorer.RpcEndpointsTest do
         {name, value} -> System.put_env(name, value)
       end)
 
+      Cachex.del(:app_cache, "zcash_nodes")
       File.rm_rf!(tmp_dir)
     end)
 
@@ -127,5 +130,26 @@ defmodule ZcashExplorer.RpcEndpointsTest do
              RpcEndpoints.list()
 
     refute Map.has_key?(endpoint, :local_genesis)
+  end
+
+  test "falls back to cached peer nodes when Kresko metadata is not mounted" do
+    Cachex.put(:app_cache, "zcash_nodes", [
+      %{
+        "addr" => "155.138.237.238:18233",
+        "subver" => "/Zebra:2.3.0/",
+        "synced_blocks" => 12_345
+      }
+    ])
+
+    Application.put_env(:zcash_explorer, RpcEndpoints, rpc_port: 18_232)
+
+    assert [
+             %{
+               endpoint: "http://155.138.237.238:18232",
+               name: "155.138.237.238",
+               role: "peer",
+               source_path: "zcash_nodes"
+             }
+           ] = RpcEndpoints.list()
   end
 end

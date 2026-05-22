@@ -19,7 +19,9 @@ defmodule ZcashExplorer.RpcEndpoints do
       |> config_paths(payload_dirs)
       |> Enum.flat_map(&nodes_from_config(&1, payload_dirs))
 
-    (nodes ++ configs)
+    peers = peer_nodes(config)
+
+    (nodes ++ configs ++ peers)
     |> Enum.uniq_by(& &1.endpoint)
     |> Enum.sort_by(&{&1.role, &1.name})
   end
@@ -108,6 +110,39 @@ defmodule ZcashExplorer.RpcEndpoints do
       _ -> []
     end
   end
+
+  defp peer_nodes(config) do
+    rpc_port = public_rpc_port(config)
+
+    case Cachex.get(:app_cache, "zcash_nodes") do
+      {:ok, nodes} when is_list(nodes) ->
+        Enum.flat_map(nodes, &peer_node(&1, rpc_port))
+
+      _ ->
+        []
+    end
+  end
+
+  defp peer_node(%{"addr" => addr}, rpc_port) do
+    with host when is_binary(host) <- host_from_addr(addr) do
+      [
+        %{
+          endpoint: "http://#{host}:#{rpc_port}",
+          experiment: "",
+          name: display_host(host),
+          provider: "",
+          region: "",
+          role: "peer",
+          run: "",
+          source_path: "zcash_nodes"
+        }
+      ]
+    else
+      _ -> []
+    end
+  end
+
+  defp peer_node(_, _rpc_port), do: []
 
   defp endpoint_for(%{"rpc_url" => rpc_url}, _payload_dirs) when is_binary(rpc_url) and rpc_url != "" do
     rpc_url
@@ -205,6 +240,58 @@ defmodule ZcashExplorer.RpcEndpoints do
   end
 
   defp short_node_name(_), do: nil
+
+  defp public_rpc_port(config) do
+    [
+      config[:rpc_port],
+      System.get_env("KRESKO_RPC_PORT"),
+      Application.get_env(:zcash_explorer, Zcashex, [])[:zcashd_port],
+      @default_rpc_port
+    ]
+    |> Enum.find_value(&normalize_port/1)
+  end
+
+  defp normalize_port(port) when is_integer(port) and port > 0, do: port
+
+  defp normalize_port(port) when is_binary(port) do
+    case Integer.parse(port) do
+      {port, ""} when port > 0 -> port
+      _ -> nil
+    end
+  end
+
+  defp normalize_port(_), do: nil
+
+  defp host_from_addr(addr) when is_binary(addr) do
+    addr = String.trim(addr)
+
+    cond do
+      addr == "" ->
+        nil
+
+      String.starts_with?(addr, "[") ->
+        bracketed_host(addr)
+
+      true ->
+        case String.split(addr, ":") do
+          [host, _port] -> host
+          [host] -> host
+          _ -> nil
+        end
+    end
+  end
+
+  defp host_from_addr(_), do: nil
+
+  defp bracketed_host(addr) do
+    case Regex.run(~r/^\[([^\]]+)\](?::\d+)?$/, addr) do
+      [_, host] -> "[#{host}]"
+      _ -> nil
+    end
+  end
+
+  defp display_host("[" <> bracketed), do: String.trim_trailing(bracketed, "]")
+  defp display_host(host), do: host
 
   defp existing_dirs(paths) do
     paths
