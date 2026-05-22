@@ -1,5 +1,6 @@
 defmodule ZcashExplorerWeb.PageController do
   use ZcashExplorerWeb, :controller
+  alias ZcashExplorer.RpcEndpoints
 
   def index(conn, _params) do
     render(conn, "index.html", page_title: "Zcash Explorer - Search the Zcash Blockchain")
@@ -46,6 +47,17 @@ defmodule ZcashExplorerWeb.PageController do
 
   def nodes(conn, _params) do
     render(conn, "nodes.html", page_title: "Zcash Nodes")
+  end
+
+  def rpc(conn, _params) do
+    render(conn, "rpc.html",
+      page_title: "Zcash RPC Endpoints",
+      rpc_endpoints: RpcEndpoints.list()
+    )
+  end
+
+  def join(conn, _params) do
+    render(conn, "join.html", page_title: "Join the Zcash NU7 testnet")
   end
 
   def vk(conn, _params) do
@@ -133,5 +145,4 @@ defmodule ZcashExplorerWeb.PageController do
     info = Map.put(info, "build", build)
     json(conn, info)
   end
-
 end

@@ -1,6 +1,7 @@
 defmodule ZcashExplorerWeb.RecentTransactionsLive do
   use ZcashExplorerWeb, :live_view
   import Phoenix.LiveView.Helpers
+
   @impl true
   def render(assigns) do
     ~L"""
@@ -24,12 +25,12 @@ defmodule ZcashExplorerWeb.RecentTransactionsLive do
       <%= for tx <- @transaction_cache do %>
       <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-white dark:hover:text-white">
-                <a href='/transactions/<%= tx["txid"] %>'>
+                <a href="/transactions/<%= tx["txid"] %>">
                   <%= tx["txid"] %>
                 </a>
               </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <a href='/blocks/<%= tx["block_height"] %>'>
+              <a href="/blocks/<%= tx["block_height"] %>">
                 <%= tx["block_height"] %>
               </a>
             </td>
@@ -71,7 +72,7 @@ defmodule ZcashExplorerWeb.RecentTransactionsLive do
                     Mixed
                   </span>
                   <% end %>
-                  <%= if  tx["type"] == "unknown" do %>
+                  <%= if tx["type"] == "unknown" do %>
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-s font-medium bg-gray-200 text-gray-900 capitalize">
                     Unknown
                   </span>
@@ -88,25 +89,26 @@ defmodule ZcashExplorerWeb.RecentTransactionsLive do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, 1000)
 
-    case Cachex.get(:app_cache, "transaction_cache") do
-      {:ok, info} ->
-        {:ok, %{"chain" => chain}} = Cachex.get(:app_cache, "metrics")
-
-        {:ok,
-         assign(socket,
-           transaction_cache: info,
-           chain: chain
-         )}
-
-      {:error, _reason} ->
-        {:ok, assign(socket, :transaction_cache, "loading...")}
-    end
+    {:ok, assign(socket, transaction_cache: cached_list("transaction_cache"), chain: cached_chain())}
   end
 
   @impl true
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, 1000)
-    {:ok, info} = Cachex.get(:app_cache, "transaction_cache")
-    {:noreply, assign(socket, :transaction_cache, info)}
+    {:noreply, assign(socket, transaction_cache: cached_list("transaction_cache"), chain: cached_chain())}
+  end
+
+  defp cached_list(key) do
+    case Cachex.get(:app_cache, key) do
+      {:ok, value} when is_list(value) -> value
+      _ -> []
+    end
+  end
+
+  defp cached_chain do
+    case Cachex.get(:app_cache, "metrics") do
+      {:ok, %{"chain" => chain}} -> chain
+      _ -> "test"
+    end
   end
 end

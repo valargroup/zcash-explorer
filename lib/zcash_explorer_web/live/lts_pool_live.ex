@@ -1,4 +1,4 @@
-defmodule ZcashExplorerWeb.OrchardPoolLive do
+defmodule ZcashExplorerWeb.LtsPoolLive do
   use ZcashExplorerWeb, :live_view
   import Phoenix.LiveView.Helpers
   @impl true
@@ -7,7 +7,7 @@ defmodule ZcashExplorerWeb.OrchardPoolLive do
 
     ~L"""
     <p class="text-2xl font-semibold text-gray-900 dark:dark:bg-slate-800 dark:text-slate-100">
-    <%= orchard_value(@blockchain_info["valuePools"]) %> <%= currency %>
+    <%= lts_value(@blockchain_info["valuePools"]) %> <%= currency %>
     </p>
     """
   end
@@ -25,8 +25,8 @@ defmodule ZcashExplorerWeb.OrchardPoolLive do
     {:noreply, assign(socket, :blockchain_info, cached_metrics())}
   end
 
-  defp orchard_value(value_pools) do
-    value_pools |> get_value_pools() |> Map.get("orchard", 0)
+  defp lts_value(value_pools) do
+    value_pools |> get_value_pools() |> Map.get("lts", 0)
   end
 
   defp get_value_pools(value_pools) when is_list(value_pools) do

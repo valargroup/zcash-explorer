@@ -2,7 +2,7 @@ DOCKER_IMAGE_NAME = zbe
 DOCKER_CONTAINER_NAME = zbe
 DOCKER_GHCR_IMAGE_NAME = ghcr.io/nighthawk-apps/zcash-explorer
 
-.PHONY: docker_build docker_run docker_clean docker_publish
+.PHONY: docker_build docker_run docker_clean docker_publish redeploy_explorer
 
 # Build the Docker image
 docker_build:
@@ -22,3 +22,6 @@ docker_clean:
 docker_publish:
 	docker tag $(DOCKER_IMAGE_NAME) $(DOCKER_GHCR_IMAGE_NAME)
 	docker push $(DOCKER_GHCR_IMAGE_NAME)
+
+redeploy_explorer:
+	scripts/redeploy_explorer.sh

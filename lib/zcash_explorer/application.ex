@@ -29,18 +29,23 @@ defmodule ZcashExplorer.Application do
            ]}
       },
       {ZcashExplorer.Lightwalletd.Client, []},
-      {Cachex,
-       name: :app_cache,
-       warmers: [
-         warmer(module: ZcashExplorer.Metrics.MetricsWarmer, state: {}),
-         warmer(module: ZcashExplorer.Metrics.MempoolInfoWarmer, state: {}),
-         warmer(module: ZcashExplorer.Metrics.NetworkSolpsWarmer, state: {}),
-         warmer(module: ZcashExplorer.Blocks.BlockWarmer, state: {}),
-         warmer(module: ZcashExplorer.Transactions.TransactionWarmer, state: {}),
-         warmer(module: ZcashExplorer.Mempool.MempoolWarmer, state: {}),
-         warmer(module: ZcashExplorer.Nodes.NodeWarmer, state: {}),
-         warmer(module: ZcashExplorer.Metrics.InfoWarmer, state: {})
-       ]}
+      Supervisor.child_spec({Cachex, name: :faucet_cache}, id: :faucet_cache),
+      {ZcashExplorer.Faucet.RateLimiter, []},
+      Supervisor.child_spec(
+        {Cachex,
+         name: :app_cache,
+         warmers: [
+           warmer(module: ZcashExplorer.Metrics.MetricsWarmer, state: {}),
+           warmer(module: ZcashExplorer.Metrics.MempoolInfoWarmer, state: {}),
+           warmer(module: ZcashExplorer.Metrics.NetworkSolpsWarmer, state: {}),
+           warmer(module: ZcashExplorer.Blocks.BlockWarmer, state: {}),
+           warmer(module: ZcashExplorer.Transactions.TransactionWarmer, state: {}),
+           warmer(module: ZcashExplorer.Mempool.MempoolWarmer, state: {}),
+           warmer(module: ZcashExplorer.Nodes.NodeWarmer, state: {}),
+           warmer(module: ZcashExplorer.Metrics.InfoWarmer, state: {})
+         ]},
+        id: :app_cache
+      )
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

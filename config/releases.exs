@@ -68,6 +68,11 @@ lightwalletd_enabled =
   |> String.downcase()
   |> then(&(&1 in ["1", "true", "yes"]))
 
+faucet_enabled =
+  System.get_env("FAUCET_ENABLED", "false")
+  |> String.downcase()
+  |> then(&(&1 in ["1", "true", "yes"]))
+
 config :zcash_explorer, ZcashExplorerWeb.Endpoint,
   url: [
     host: explorer_hostname,
@@ -95,6 +100,18 @@ config :zcash_explorer, Zcashex,
   vk_mem: vk_mem,
   vk_runnner_image: vk_runnner_image,
   zcash_network: zcash_network
+
+config :zcash_explorer, ZcashExplorer.Faucet,
+  enabled: faucet_enabled,
+  source_address: System.get_env("FAUCET_SOURCE_ADDRESS"),
+  amount: System.get_env("FAUCET_AMOUNT", "0.1"),
+  daily_ip_limit: System.get_env("FAUCET_DAILY_IP_LIMIT", "10") |> String.to_integer(),
+  window_seconds: System.get_env("FAUCET_WINDOW_SECONDS", "86400") |> String.to_integer(),
+  min_confirmations: System.get_env("FAUCET_MIN_CONFIRMATIONS", "1") |> String.to_integer(),
+  operation_poll_attempts:
+    System.get_env("FAUCET_OPERATION_POLL_ATTEMPTS", "30") |> String.to_integer(),
+  operation_poll_interval_ms:
+    System.get_env("FAUCET_OPERATION_POLL_INTERVAL_MS", "1000") |> String.to_integer()
 
 if lightwalletd_enabled do
   lightwalletd_hostname =

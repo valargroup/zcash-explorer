@@ -63,6 +63,15 @@ defmodule ZcashExplorerWeb.BlockChainInfoLive do
     </div>
 
     <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6 dark:bg-gray-800">
+    <dt class="text-sm font-medium text-gray-500 truncate">
+      Sustainability pool
+    </dt>
+    <dd class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">
+        <%= lts_value(@blockchain_info["valuePools"]) %> <%= currency %>
+    </dd>
+    </div>
+
+    <div class="px-4 py-5 bg-white shadow rounded-lg overflow-hidden sm:p-6 dark:bg-gray-800">
       <dt class="text-sm font-medium text-gray-500 truncate">
         zcashd version
       </dt>
@@ -111,6 +120,10 @@ defmodule ZcashExplorerWeb.BlockChainInfoLive do
 
   defp orchard_value(value_pools) do
     value_pools |> get_value_pools |> Map.get("orchard")
+  end
+
+  defp lts_value(value_pools) do
+    value_pools |> get_value_pools() |> Map.get("lts", 0)
   end
 
   defp get_value_pools(value_pools) do

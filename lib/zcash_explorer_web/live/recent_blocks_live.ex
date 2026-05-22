@@ -1,6 +1,7 @@
 defmodule ZcashExplorerWeb.RecentBlocksLive do
   use ZcashExplorerWeb, :live_view
   import Phoenix.LiveView.Helpers
+
   @impl true
   def render(assigns) do
     ~L"""
@@ -21,12 +22,12 @@ defmodule ZcashExplorerWeb.RecentBlocksLive do
       <%= for block <- @block_cache do %>
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-white dark:hover:text-white">
-            <a href='/blocks/<%= block["height"] %>'>
+            <a href="/blocks/<%= block["height"] %>">
                 <%= block["height"] %>
               </td>
             </a>
             <td class="px-4 py-4 whitespace-nowrap">
-                    <a href='/blocks/<%= block["hash"] %>'>
+                    <a href="/blocks/<%= block["hash"] %>">
                     <%= block["hash"] %>
                     </a>
               </td>
@@ -54,20 +55,26 @@ defmodule ZcashExplorerWeb.RecentBlocksLive do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, 1000)
 
-    case Cachex.get(:app_cache, "block_cache") do
-      {:ok, info} ->
-        {:ok, %{"chain" => chain}} = Cachex.get(:app_cache, "metrics")
-        {:ok, assign(socket, block_cache: info, chain: chain)}
-
-      {:error, _reason} ->
-        {:ok, assign(socket, :block_cache, "loading...")}
-    end
+    {:ok, assign(socket, block_cache: cached_list("block_cache"), chain: cached_chain())}
   end
 
   @impl true
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, 1000)
-    {:ok, info} = Cachex.get(:app_cache, "block_cache")
-    {:noreply, assign(socket, :block_cache, info)}
+    {:noreply, assign(socket, block_cache: cached_list("block_cache"), chain: cached_chain())}
+  end
+
+  defp cached_list(key) do
+    case Cachex.get(:app_cache, key) do
+      {:ok, value} when is_list(value) -> value
+      _ -> []
+    end
+  end
+
+  defp cached_chain do
+    case Cachex.get(:app_cache, "metrics") do
+      {:ok, %{"chain" => chain}} -> chain
+      _ -> "test"
+    end
   end
 end

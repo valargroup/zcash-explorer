@@ -18,5 +18,25 @@ config :zcash_explorer, ZcashExplorerWeb.Endpoint,
   http: [port: 4002],
   server: false
 
+config :zcash_explorer, Zcashex,
+  zcashd_hostname: "localhost",
+  zcashd_port: "8232",
+  zcashd_username: "zcashrpc",
+  zcashd_password: "password",
+  vk_cpus: "0.2",
+  vk_mem: "1024M",
+  vk_runnner_image: "nighthawkapps/vkrunner",
+  zcash_network: "mainnet"
+
+config :zcash_explorer, ZcashExplorer.Faucet,
+  enabled: false,
+  source_address: nil,
+  amount: "0.1",
+  daily_ip_limit: 10,
+  window_seconds: 86_400,
+  min_confirmations: 1,
+  operation_poll_attempts: 30,
+  operation_poll_interval_ms: 1_000
+
 # Print only warnings and errors during test
 config :logger, level: :warn

@@ -30,9 +30,12 @@ defmodule ZcashExplorerWeb.Router do
     live "/index/recent_transactions", RecentTransactionsLive
     live "/live/raw_mempool", RawMempoolLive
     live "/live/orchard_pool", OrchardPoolLive
+    live "/live/lts_pool", LtsPoolLive
     live "/live/nodes", NodesLive
     live "/vkdetails", VkLive
     live "/blockchain-info-live", BlockChainInfoLive
+    get "/faucet", FaucetController, :index
+    post "/faucet", FaucetController, :create
     get "/payment-disclosure", PageController, :disclosure
     post "/payment-disclosure", PageController, :do_disclosure
     get "/address/:address", AddressController, :get_address
@@ -40,6 +43,8 @@ defmodule ZcashExplorerWeb.Router do
     get "/blocks", BlockController, :index
     get "/mempool", PageController, :mempool
     get "/nodes", PageController, :nodes
+    get "/rpc", PageController, :rpc
+    get "/join", PageController, :join
     get "/vk", PageController, :vk
     post "/vk", PageController, :do_import_vk
     get "/blockchain-info", PageController, :blockchain_info

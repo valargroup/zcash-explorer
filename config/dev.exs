@@ -52,6 +52,16 @@ config :zcash_explorer, ZcashExplorer.Lightwalletd,
   port: 9067,
   tls: false
 
+config :zcash_explorer, ZcashExplorer.Faucet,
+  enabled: false,
+  source_address: nil,
+  amount: "0.1",
+  daily_ip_limit: 10,
+  window_seconds: 86_400,
+  min_confirmations: 1,
+  operation_poll_attempts: 30,
+  operation_poll_interval_ms: 1_000
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

@@ -1,0 +1,13 @@
+<div x-data="{ copied: false }" class="relative group">
+  <pre
+    id={@id}
+    x-ref="code"
+    class="overflow-x-auto rounded-md border border-gray-200 bg-gray-900 px-4 py-3 pr-20 text-sm leading-relaxed text-gray-100 shadow dark:border-slate-700"><code><%= @cmd %></code></pre>
+  <button
+    type="button"
+    @click="navigator.clipboard.writeText($refs.code.innerText.trim()).then(() => { copied = true; setTimeout(() => copied = false, 1500) })"
+    class="absolute top-2 right-2 rounded border border-gray-600 px-2 py-1 text-xs font-medium text-gray-200 hover:bg-gray-700 focus:outline-none">
+    <span x-show="!copied">Copy</span>
+    <span x-show="copied" x-cloak>Copied!</span>
+  </button>
+</div>

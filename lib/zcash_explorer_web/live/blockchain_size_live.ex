@@ -1,6 +1,7 @@
 defmodule ZcashExplorerWeb.BlockChainSizeLive do
   use ZcashExplorerWeb, :live_view
   import Phoenix.LiveView.Helpers
+
   @impl true
   def render(assigns) do
     ~L"""
@@ -14,19 +15,19 @@ defmodule ZcashExplorerWeb.BlockChainSizeLive do
   def mount(_params, _session, socket) do
     if connected?(socket), do: Process.send_after(self(), :update, 15000)
 
-    case Cachex.get(:app_cache, "metrics") do
-      {:ok, info} ->
-        {:ok, assign(socket, :blockchain_size, info["size_on_disk"])}
-
-      {:error, _reason} ->
-        {:ok, assign(socket, :blockchain_size, "loading...")}
-    end
+    {:ok, assign(socket, :blockchain_size, cached_metric("size_on_disk", 0))}
   end
 
   @impl true
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, 15000)
-    {:ok, info} = Cachex.get(:app_cache, "metrics")
-    {:noreply, assign(socket, :blockchain_size, info["size_on_disk"])}
+    {:noreply, assign(socket, :blockchain_size, cached_metric("size_on_disk", 0))}
+  end
+
+  defp cached_metric(key, default) do
+    case Cachex.get(:app_cache, "metrics") do
+      {:ok, info} when is_map(info) -> Map.get(info, key, default)
+      _ -> default
+    end
   end
 end

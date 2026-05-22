@@ -1,0 +1,50 @@
+<main class="py-4">
+  <div class="mx-4 sm:mx-8 max-w-4xl">
+    <div class="mb-6">
+      <h3 class="text-lg leading-6 font-medium text-gray-500 py-2 dark:text-slate-300">
+        Join the NU7 testnet
+      </h3>
+      <p class="text-sm text-gray-500 dark:text-slate-400">
+        Run a node on the NU7 testnet with the published join script. The script downloads a
+        bundle that contains the node binaries, network parameters and bootstrap configuration.
+        You only need <code class="rounded bg-gray-100 px-1 dark:bg-slate-800 dark:text-slate-100">curl</code>
+        and <code class="rounded bg-gray-100 px-1 dark:bg-slate-800 dark:text-slate-100">bash</code>.
+      </p>
+    </div>
+
+    <ol class="space-y-8">
+      <li>
+        <h4 class="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-slate-300 mb-2">
+          1. Download the join script
+        </h4>
+        <p class="text-sm text-gray-500 dark:text-slate-400 mb-2">
+          Grab it once from the release. Re-download to pick up a newer version.
+        </p>
+        <%= render "_join_command.html", id: "cmd-download", cmd:
+          "curl -fsSLO https://github.com/valargroup/kresko/releases/download/v0.1.0/join-nu7-testnet.sh" %>
+      </li>
+
+      <li>
+        <h4 class="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-slate-300 mb-2">
+          2a. Observer mode
+        </h4>
+        <p class="text-sm text-gray-500 dark:text-slate-400 mb-2">
+          Sync and follow the chain without mining.
+        </p>
+        <%= render "_join_command.html", id: "cmd-observer", cmd:
+          "bash join-nu7-testnet.sh \\\n  --bundle-url https://github.com/valargroup/kresko/releases/download/v0.1.0/nu7-join-bundle.tar.gz" %>
+      </li>
+
+      <li>
+        <h4 class="text-sm font-medium uppercase tracking-wider text-gray-500 dark:text-slate-300 mb-2">
+          2b. Mining mode
+        </h4>
+        <p class="text-sm text-gray-500 dark:text-slate-400 mb-2">
+          Same as above, plus <code class="rounded bg-gray-100 px-1 dark:bg-slate-800 dark:text-slate-100">--mine</code> to mine blocks.
+        </p>
+        <%= render "_join_command.html", id: "cmd-mining", cmd:
+          "bash join-nu7-testnet.sh \\\n  --bundle-url https://github.com/valargroup/kresko/releases/download/v0.1.0/nu7-join-bundle.tar.gz --mine" %>
+      </li>
+    </ol>
+  </div>
+</main>

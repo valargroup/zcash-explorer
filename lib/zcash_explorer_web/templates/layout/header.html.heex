@@ -103,6 +103,11 @@ Heroicon name: outline/x" x-state:on="Menu open" x-state:off="Menu closed" class
                             <div x-description="Dropdown menu, show/hide based on menu state." x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-300" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                                 <div class="py-1" role="none">
                                     <a href="/nodes" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Nodes</a>
+                                    <a href="/rpc" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">RPC</a>
+                                    <a href="/join" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Join Network</a>
+                                    <%= if assigns[:zcash_network] == "testnet" && ZcashExplorer.Faucet.enabled?() do %>
+                                      <a href="/faucet" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Faucet</a>
+                                    <% end %>
                                     <a href="/payment-disclosure" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Payment Disclosure</a>
                                  <%= if assigns[:zcash_network] != "testnet" do %>
   <a href="/vk" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Viewing Key</a>
@@ -134,6 +139,12 @@ Heroicon name: outline/x" x-state:on="Menu open" x-state:off="Menu closed" class
         <div class="pt-4 pb-3 border-t ">
             <div class="px-2">
                  <a href="/nodes" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Nodes</a>
+                 <a href="/rpc" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">RPC</a>
+                 <a href="/join" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Join Network</a>
+
+                <%= if assigns[:zcash_network] == "testnet" && ZcashExplorer.Faucet.enabled?() do %>
+                  <a href="/faucet" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Faucet</a>
+                <% end %>
 
                 <a href="/payment-disclosure" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Payment Disclosure</a>
 
