@@ -7,7 +7,7 @@ defmodule ZcashExplorerWeb.SearchController do
     case Integer.parse(qs) do
       {height, ""} when height >= 0 ->
         case ZcashExplorer.RPC.getblockhash(height) do
-          {:ok, _hash} -> redirect(conn, to: "/blocks/#{height}")
+          {:ok, _hash} -> redirect(conn, to: "/explorer/blocks/#{height}")
           _ -> search_resource(conn, qs)
         end
 
@@ -47,19 +47,19 @@ defmodule ZcashExplorerWeb.SearchController do
 
     cond do
       is_valid_block?(block_resp) ->
-        redirect(conn, to: "/blocks/#{qs}")
+        redirect(conn, to: "/explorer/blocks/#{qs}")
 
       is_valid_tx?(tx_resp) ->
-        redirect(conn, to: "/transactions/#{qs}")
+        redirect(conn, to: "/explorer/transactions/#{qs}")
 
       is_valid_taddr?(tadd_resp) ->
-        redirect(conn, to: "/address/#{qs}")
+        redirect(conn, to: "/explorer/address/#{qs}")
 
       is_valid_zaddr?(zadd_resp) ->
-        redirect(conn, to: "/address/#{qs}")
+        redirect(conn, to: "/explorer/address/#{qs}")
 
       is_valid_unified_address?(zadd_resp) ->
-        redirect(conn, to: "/ua/#{qs}")
+        redirect(conn, to: "/explorer/ua/#{qs}")
 
       true ->
         conn

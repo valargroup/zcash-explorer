@@ -53,7 +53,7 @@ defmodule ZcashExplorerWeb.FaucetControllerTest do
   end
 
   test "GET /faucet renders the faucet page when enabled on testnet", %{conn: conn} do
-    conn = get(conn, "/faucet")
+    conn = get(conn, "/explorer/faucet")
 
     assert html_response(conn, 200) =~ "Testnet Faucet"
     assert html_response(conn, 200) =~ "Request testnet ZEC"
@@ -62,13 +62,13 @@ defmodule ZcashExplorerWeb.FaucetControllerTest do
   test "GET /faucet returns 404 when disabled", %{conn: conn} do
     Application.put_env(:zcash_explorer, Faucet, Keyword.put(Faucet.config(), :enabled, false))
 
-    conn = get(conn, "/faucet")
+    conn = get(conn, "/explorer/faucet")
 
     assert response(conn, 404) == "Not found"
   end
 
   test "POST /faucet rejects blank address", %{conn: conn} do
-    conn = post(conn, "/faucet", %{"address" => ""})
+    conn = post(conn, "/explorer/faucet", %{"address" => ""})
 
     response = html_response(conn, 200)
     assert response =~ "Faucet request failed."
@@ -76,7 +76,7 @@ defmodule ZcashExplorerWeb.FaucetControllerTest do
   end
 
   test "POST /faucet rejects shielded and unified addresses", %{conn: conn} do
-    conn = post(conn, "/faucet", %{"address" => "u1example"})
+    conn = post(conn, "/explorer/faucet", %{"address" => "u1example"})
 
     response = html_response(conn, 200)
     assert response =~ "Faucet only supports transparent addresses."
@@ -85,18 +85,18 @@ defmodule ZcashExplorerWeb.FaucetControllerTest do
   test "POST /faucet renders rate limit errors", %{conn: conn} do
     Process.put(:rate_limit_response, {:error, :rate_limited})
 
-    conn = post(conn, "/faucet", %{"address" => "tm-destination"})
+    conn = post(conn, "/explorer/faucet", %{"address" => "tm-destination"})
 
     response = html_response(conn, 200)
     assert response =~ "This IP has reached the faucet request limit."
   end
 
   test "POST /faucet renders txid link on success", %{conn: conn} do
-    conn = post(conn, "/faucet", %{"address" => "tm-destination"})
+    conn = post(conn, "/explorer/faucet", %{"address" => "tm-destination"})
 
     response = html_response(conn, 200)
     assert response =~ "Faucet transaction submitted."
-    assert response =~ ~s(href="/transactions/txid-1")
+    assert response =~ ~s(href="/explorer/transactions/txid-1")
   end
 
   defp restore_env(module, nil), do: Application.delete_env(:zcash_explorer, module)

@@ -31,7 +31,7 @@ defmodule ZcashExplorerWeb.VkLive do
     <%= for tx <- @message["txs"] do %>
     <tr class="hover:bg-indigo-50">
      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:text-indigo-500">
-        <a href='/transactions/<%= tx["txid"] %>' target="_blank">
+        <a href='/explorer/transactions/<%= tx["txid"] %>' target="_blank">
         <%= tx["txid"] %>
         </a>
     </td>

@@ -19,7 +19,7 @@ defmodule ZcashExplorerWeb.RawMempoolLive do
        <%= for tx <- @raw_mempool do %>
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:text-indigo-500 animate-pulse dark:text-white dark:hover:text-white">
-          <a href='/transactions/<%= tx["txid"] %>'>
+          <a href='/explorer/transactions/<%= tx["txid"] %>'>
                <%= tx["txid"] %>
           </a>
         </td>

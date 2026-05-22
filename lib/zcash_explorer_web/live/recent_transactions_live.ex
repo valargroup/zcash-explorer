@@ -25,12 +25,12 @@ defmodule ZcashExplorerWeb.RecentTransactionsLive do
       <%= for tx <- @transaction_cache do %>
       <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-white dark:hover:text-white">
-                <a href="/transactions/<%= tx["txid"] %>">
+                <a href="/explorer/transactions/<%= tx["txid"] %>">
                   <%= tx["txid"] %>
                 </a>
               </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <a href="/blocks/<%= tx["block_height"] %>">
+              <a href="/explorer/blocks/<%= tx["block_height"] %>">
                 <%= tx["block_height"] %>
               </a>
             </td>

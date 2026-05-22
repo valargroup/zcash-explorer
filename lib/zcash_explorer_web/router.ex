@@ -15,7 +15,15 @@ defmodule ZcashExplorerWeb.Router do
     plug :accepts, ["json"]
   end
 
+  # NU7 testnet landing page.
   scope "/", ZcashExplorerWeb do
+    pipe_through :browser
+
+    get "/", PageController, :landing
+  end
+
+  # Block explorer lives under /explorer.
+  scope "/explorer", ZcashExplorerWeb do
     pipe_through :browser
 
     get "/", PageController, :index
@@ -55,6 +63,10 @@ defmodule ZcashExplorerWeb.Router do
     pipe_through :api
     get "/api/v1/blockchain-info", PageController, :blockchain_info_api
     post "/api/vk/:hostname", PageController, :vk_from_zecwalletcli
+  end
+
+  scope "/explorer", ZcashExplorerWeb do
+    pipe_through :api
     get "/transactions/:txid/raw", TransactionController, :get_raw_transaction
   end
 

@@ -4,12 +4,12 @@
         <div class="relative flex items-center justify-between h-16">
             <!-- Logo section -->
             <div class="flex items-center px-2 lg:px-0 xl:w-64">
-              <a href="/">
+              <a href="/explorer">
                 <div class="shrink-0">
                     <img class="h-8 w-auto" src={"#{Routes.static_path(@conn, "/images/zcash-icon-white.svg")}"} alt="Zcash Block Explorer" >
                 </div>
               </a>
-                <a href="/">
+                <a href="/explorer">
                     
 <%= if @zcash_network == "testnet" do %>
   <div class="shrink-0 px-1 text-white dark:text-white md:block lg:block xl:block 2xl:block hidden ">
@@ -32,7 +32,7 @@
                                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
                             </svg>
                         </div>
-                    <form action="/search">
+                    <form action="/explorer/search">
                         <input id="search" name="qs" class="
                         block
                         w-full
@@ -86,9 +86,11 @@ Heroicon name: outline/x" x-state:on="Menu open" x-state:off="Menu closed" class
                 <div class="flex items-center justify-end">
                     <div class="flex">
 
-                      <a href="/mempool" class="px-3 py-2 rounded-md text-sm font-medium text-indigo-200 hover:text-white dark:text-gray-400">Mempool</a>
+                      <a href="/" class="px-3 py-2 rounded-md text-sm font-medium text-indigo-200 hover:text-white dark:text-gray-400">NU7 Testnet</a>
 
-                     <a href="/blocks" class="px-3 py-2 rounded-md text-sm font-medium text-indigo-200 hover:text-white dark:text-gray-400">Blocks</a>
+                      <a href="/explorer/mempool" class="px-3 py-2 rounded-md text-sm font-medium text-indigo-200 hover:text-white dark:text-gray-400">Mempool</a>
+
+                     <a href="/explorer/blocks" class="px-3 py-2 rounded-md text-sm font-medium text-indigo-200 hover:text-white dark:text-gray-400">Blocks</a>
 
                         <div x-data="{ open: false }" @keydown.escape.stop="open = false" @click.away="open = false" class="relative inline-block text-left">
                             <div>
@@ -102,15 +104,15 @@ Heroicon name: outline/x" x-state:on="Menu open" x-state:off="Menu closed" class
 
                             <div x-description="Dropdown menu, show/hide based on menu state." x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-300" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                                 <div class="py-1" role="none">
-                                    <a href="/nodes" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Nodes</a>
-                                    <a href="/rpc" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">RPC</a>
-                                    <a href="/join" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Join Network</a>
+                                    <a href="/explorer/nodes" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Nodes</a>
+                                    <a href="/explorer/rpc" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">RPC</a>
+                                    <a href="/explorer/join" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Join Network</a>
                                     <%= if assigns[:zcash_network] == "testnet" && ZcashExplorer.Faucet.enabled?() do %>
-                                      <a href="/faucet" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Faucet</a>
+                                      <a href="/explorer/faucet" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Faucet</a>
                                     <% end %>
-                                    <a href="/payment-disclosure" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Payment Disclosure</a>
+                                    <a href="/explorer/payment-disclosure" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Payment Disclosure</a>
                                  <%= if assigns[:zcash_network] != "testnet" do %>
-  <a href="/vk" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Viewing Key</a>
+  <a href="/explorer/vk" class="block px-4 py-2 text-sm hover:bg-gray-200 bg-white dark:bg-gray-300 dark:hover:bg-gray-500" role="menuitem">Viewing Key</a>
 <% end %>
 
                                 </div>
@@ -131,25 +133,27 @@ Heroicon name: outline/x" x-state:on="Menu open" x-state:off="Menu closed" class
     <div x-description="Mobile menu, show/hide based on menu state." class="lg:hidden" id="mobile-menu" x-show="open">
         <div class="px-2 pt-2 pb-3">
 
-            <a href="/mempool" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Mempool</a>
+            <a href="/" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">NU7 Testnet</a>
 
-            <a href="/blocks" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Blocks</a>
+            <a href="/explorer/mempool" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Mempool</a>
+
+            <a href="/explorer/blocks" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Blocks</a>
 
         </div>
         <div class="pt-4 pb-3 border-t ">
             <div class="px-2">
-                 <a href="/nodes" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Nodes</a>
-                 <a href="/rpc" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">RPC</a>
-                 <a href="/join" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Join Network</a>
+                 <a href="/explorer/nodes" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Nodes</a>
+                 <a href="/explorer/rpc" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">RPC</a>
+                 <a href="/explorer/join" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Join Network</a>
 
                 <%= if assigns[:zcash_network] == "testnet" && ZcashExplorer.Faucet.enabled?() do %>
-                  <a href="/faucet" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Faucet</a>
+                  <a href="/explorer/faucet" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Faucet</a>
                 <% end %>
 
-                <a href="/payment-disclosure" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Payment Disclosure</a>
+                <a href="/explorer/payment-disclosure" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Payment Disclosure</a>
 
           <%= if assigns[:zcash_network] != "testnet" do %>
-  <a href="/vk" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Viewing Key</a>
+  <a href="/explorer/vk" class="text-indigo-200 hover:text-indigo-100 hover:bg-indigo-600 block px-3 py-2 rounded-md text-base font-medium">Viewing Key</a>
 <% end %>
 
 

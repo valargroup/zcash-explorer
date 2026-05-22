@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="NU7-rc0 testnet for Zcash — 3x faster blocks, double Orchard TPS, Action Limits, and a Network Sustainability Mechanism. Join the ephemeral two-week testnet." />
+    <title>NU7-rc0 Testnet — Zcash</title>
+    <link rel="icon" href="<%= Routes.static_path(@conn, "/favicon.ico") %>" />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #182022;
+        --muted: #596568;
+        --line: #d6dfdc;
+        --paper: #fbfcf9;
+        --panel: #ffffff;
+        --green: #1f6b55;
+        --green-dark: #164b3d;
+        --blue: #2d5d88;
+        --amber: #f3b33d;
+        --code-bg: #13211e;
+        --code-ink: #edf7f2;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        background: linear-gradient(
+            180deg,
+            rgba(31, 107, 85, 0.12),
+            rgba(243, 179, 61, 0.08) 42%,
+            transparent 72%
+          ),
+          var(--paper);
+        font: 15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system,
+          BlinkMacSystemFont, "Segoe UI", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: var(--blue);
+        font-weight: 700;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(1.55rem, 4vw, 2.7rem);
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+      }
+
+      h2 {
+        font-size: 1.1rem;
+        line-height: 1.25;
+      }
+
+      h3 {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 8px;
+      }
+
+      .shell {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 56px;
+      }
+
+      /* Topbar */
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 22px 24px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.88);
+        box-shadow: 0 16px 48px rgba(24, 32, 34, 0.08);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 0;
+      }
+
+      .brand svg {
+        flex: 0 0 auto;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 34px;
+        padding: 0 14px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--green-dark);
+        background: #eef8f2;
+        font-size: 0.875rem;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .status .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--green);
+        box-shadow: 0 0 0 4px rgba(31, 107, 85, 0.18);
+      }
+
+      /* Grid + panels */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 18px;
+      }
+
+      .panel {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.88);
+        box-shadow: 0 16px 48px rgba(24, 32, 34, 0.08);
+        padding: 24px;
+      }
+
+      .panel.wide {
+        grid-column: 1 / -1;
+      }
+
+      .panel-title {
+        min-width: 0;
+        margin-bottom: 12px;
+      }
+
+      .body-copy {
+        color: var(--muted);
+        font-size: 0.9375rem;
+        max-width: 70ch;
+      }
+
+      .body-copy + .body-copy {
+        margin-top: 10px;
+      }
+
+      .lede {
+        font-size: 1.05rem;
+        color: var(--ink);
+      }
+
+      /* Callout */
+      .callout {
+        margin-top: 16px;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--amber);
+        border-radius: 6px;
+        background: #fffaf0;
+        color: var(--ink);
+        font-size: 0.9rem;
+      }
+
+      .callout strong {
+        color: var(--green-dark);
+      }
+
+      /* Stat band */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin-top: 20px;
+        border-top: 1px solid var(--line);
+      }
+
+      .stats div {
+        min-width: 0;
+        padding: 14px 14px 0 0;
+      }
+
+      .stats div + div {
+        padding-left: 14px;
+        border-left: 1px solid var(--line);
+      }
+
+      .stat-value {
+        font-size: 1.6rem;
+        font-weight: 800;
+        line-height: 1.1;
+        color: var(--green-dark);
+        letter-spacing: -0.02em;
+      }
+
+      .stat-label {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      /* Feature grid */
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .feature {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: #f4f7f4;
+        padding: 16px;
+      }
+
+      .feature h3 {
+        color: var(--green-dark);
+        margin-bottom: 8px;
+      }
+
+      .feature-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 6px;
+      }
+
+      .feature p {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      /* Join steps */
+      .join-steps {
+        margin: 18px 0 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: join-step;
+      }
+
+      .join-step {
+        display: grid;
+        grid-template-columns: 32px minmax(0, 1fr);
+        gap: 14px;
+        padding: 18px 0;
+        border-top: 1px solid var(--line);
+        counter-increment: join-step;
+      }
+
+      .join-step:first-child {
+        padding-top: 2px;
+        border-top: 0;
+      }
+
+      .join-step:last-child {
+        padding-bottom: 0;
+      }
+
+      .join-step::before {
+        content: counter(join-step);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border: 1px solid #b9d7ca;
+        border-radius: 999px;
+        color: var(--green-dark);
+        background: #eef8f2;
+        font-size: 0.85rem;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .join-step-body {
+        min-width: 0;
+      }
+
+      .join-step h3 {
+        margin-bottom: 6px;
+        color: var(--green-dark);
+      }
+
+      .note {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+
+      .body-copy + .code-block,
+      .note + .code-block {
+        margin-top: 12px;
+      }
+
+      /* Code blocks */
+      .code-block {
+        position: relative;
+        border-radius: 7px;
+        background: var(--code-bg);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        overflow: hidden;
+      }
+
+      pre {
+        width: calc(100% - 48px);
+        margin: 0;
+        padding: 13px 15px;
+        overflow-x: auto;
+        background: transparent;
+        color: var(--code-ink);
+        white-space: pre;
+      }
+
+      pre::-webkit-scrollbar {
+        height: 5px;
+      }
+
+      pre::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      pre::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 3px;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
+          "Liberation Mono", monospace;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .copy {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        min-width: 32px;
+        height: 28px;
+        padding: 0;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.07);
+        color: rgba(237, 247, 242, 0.65);
+        cursor: pointer;
+        font: inherit;
+        transition: background 0.15s, border-color 0.15s, color 0.15s;
+      }
+
+      .copy:hover {
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.28);
+        color: var(--code-ink);
+      }
+
+      .copy:focus-visible {
+        outline: 2px solid rgba(31, 107, 85, 0.55);
+        outline-offset: 2px;
+      }
+
+      .copy.done {
+        border-color: rgba(160, 220, 185, 0.4);
+        color: #a8dfc0;
+        background: rgba(160, 220, 185, 0.1);
+      }
+
+      .copy svg {
+        width: 15px;
+        height: 15px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+      }
+
+      /* Links */
+      .links {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .link-box {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #f4f7f4;
+        padding: 16px;
+      }
+
+      .link-box p {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+
+      /* Footer */
+      .foot {
+        margin-top: 28px;
+        padding-top: 18px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 18px;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      @media (max-width: 860px) {
+        .feature-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
+        .shell {
+          width: min(100% - 22px, 1120px);
+          padding-top: 16px;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .grid,
+        .feature-grid,
+        .stats,
+        .links {
+          grid-template-columns: 1fr;
+        }
+
+        .stats div + div {
+          padding-left: 0;
+          border-left: 0;
+          border-top: 1px solid var(--line);
+          padding-top: 14px;
+          margin-top: 4px;
+        }
+
+        .panel {
+          padding: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="topbar" aria-label="Page header">
+        <div class="brand">
+          <svg width="44" height="44" viewBox="0 0 493.3 490.2" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <g fill="#1f6b55">
+              <path d="m245.4 20c-124.3 0-225.4 101.1-225.4 225.4s101.1 225.4 225.4 225.4 225.4-101.1 225.4-225.4-101.1-225.4-225.4-225.4zm0 413.6c-103.8 0-188.2-84.4-188.2-188.2s84.4-188.2 188.2-188.2 188.2 84.4 188.2 188.2-84.4 188.2-188.2 188.2z"/>
+              <path d="m325.8 175.1v-34.3h-61.5v-37.8h-37.8v37.8h-61.5v45.5h95.3l-95.3 129.4v34.3h61.5v37.7h37.8v-37.7h61.5v-45.5h-95.4z"/>
+            </g>
+          </svg>
+          <div>
+            <p class="eyebrow">Zcash · NU7</p>
+            <h1>NU7-rc0 Testnet</h1>
+          </div>
+        </div>
+        <div class="status"><span class="dot" aria-hidden="true"></span>rc0 · ephemeral testnet</div>
+      </section>
+
+      <section class="grid">
+        <article class="panel wide">
+          <div class="panel-title">
+            <h2>The first NU7 testnet is live</h2>
+          </div>
+          <p class="body-copy lede">
+            This is the first NU7 testnet going live. We've built out how we see
+            the consensus changes for NU7 — the most user-facing one is the block
+            time reduction, which you can feel before the quickly approaching NU7
+            vote.
+          </p>
+          <p class="body-copy">
+            The feature set below matches what we believe NU7 should be, and how
+            we are voting.
+          </p>
+          <div class="callout">
+            <strong>Ephemeral by design.</strong> This testnet will last about
+            two weeks. We'll ship a more polished one after that — tell us what
+            you'd like to see.
+          </div>
+          <div class="stats" aria-label="Headline NU7 numbers">
+            <div>
+              <div class="stat-value">25s</div>
+              <div class="stat-label">Block time, down from 75s</div>
+            </div>
+            <div>
+              <div class="stat-value">2&times;</div>
+              <div class="stat-label">Orchard max throughput</div>
+            </div>
+            <div>
+              <div class="stat-value">&minus;40%</div>
+              <div class="stat-label">Max sandblast attack vector</div>
+            </div>
+            <div>
+              <div class="stat-value">&lt;5%</div>
+              <div class="stat-label">Uncle rate on decentralized testnets</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel wide">
+          <div class="panel-title">
+            <h2>What's in NU7</h2>
+          </div>
+          <div class="feature-grid">
+            <div class="feature">
+              <h3>Speed</h3>
+              <div class="feature-title">3&times; faster blocks</div>
+              <p>
+                Block times drop from 75 seconds to 25, so payments confirm
+                sooner. We've shown uncle rate stays sub-5% on decentralized
+                testnets, and it will be even lower on mainnet.
+              </p>
+            </div>
+            <div class="feature">
+              <h3>Throughput</h3>
+              <div class="feature-title">Double the TPS</div>
+              <p>
+                Orchard max throughput doubles, so the shielded pool can carry
+                far more transactions per second.
+              </p>
+            </div>
+            <div class="feature">
+              <h3>Action limits</h3>
+              <div class="feature-title">Less sandblasting damage</div>
+              <p>
+                We implement the Action Limits proposal, lowering the maximum
+                sandblast attack vector by 40%.
+              </p>
+            </div>
+            <div class="feature">
+              <h3>ZIP-218</h3>
+              <div class="feature-title">Lower PoW variance</div>
+              <p>
+                Behind-the-scenes difficulty math is retuned for a more secure
+                result, matching the wall-clock guarantees Zcash had at launch.
+                Currently a component of ZIP-218.
+              </p>
+            </div>
+            <div class="feature">
+              <h3>Sustainability</h3>
+              <div class="feature-title">Network Sustainability Mechanism</div>
+              <p>
+                A long-term savings pool for the network. Block rewards halve
+                every four years, so miners eventually depend on variable tx
+                fees. Our NSM variant collects 60% of tx fees and distributes
+                them to miners after the fourth halving.
+              </p>
+            </div>
+            <div class="feature">
+              <h3>Sprout</h3>
+              <div class="feature-title">Delayed Sprout deprecation</div>
+              <p>
+                Sprout pool deprecation is planned, but we're awaiting the
+                token-holder vote on the date. We make the Sprout pool inactive
+                at a date one year out.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel wide">
+          <div class="panel-title">
+            <h2>What we left out</h2>
+          </div>
+          <p class="body-copy">
+            We do <strong>not</strong> include memo bundles, and we are not in
+            favor of their inclusion in NU7.
+          </p>
+          <p class="body-copy">
+            There is one slated change we excluded: the v6 extensible
+            transaction format. This is due to timeline concerns — the code is
+            not written and the ZIP is not agreed upon. The extensible
+            transaction format also carries short-term ecosystem breakage
+            concerns: it breaks parsers, and we worry about Ledger and Keystone
+            devices putting funds at risk of being unspendable. We're fans of
+            the idea, especially long-term — and users will have to update
+            anyway for the subsequent Tachyon upgrade, which follows soon after.
+          </p>
+        </article>
+
+        <article class="panel wide">
+          <div class="panel-title">
+            <h2>Join the network</h2>
+          </div>
+          <p class="body-copy">
+            Run a node on the NU7 testnet with the published join script. It
+            downloads a bundle containing the node binaries, network parameters,
+            and bootstrap configuration. You only need
+            <code>curl</code> and <code>bash</code>.
+          </p>
+          <ol class="join-steps">
+            <li class="join-step">
+              <div class="join-step-body">
+                <h3>Download the join script</h3>
+                <p class="note">Grab it once from the release.</p>
+                <div class="code-block">
+                  <pre><code id="join-download">curl -fsSLO https://github.com/valargroup/kresko/releases/download/v0.1.0/join-nu7-testnet.sh</code></pre>
+                  <button class="copy" type="button" data-copy="join-download" aria-label="Copy download command" title="Copy"></button>
+                </div>
+              </div>
+            </li>
+            <li class="join-step">
+              <div class="join-step-body">
+                <h3>Observer mode</h3>
+                <p class="note">Sync and follow the chain without mining.</p>
+                <div class="code-block">
+                  <pre><code id="join-observer">bash join-nu7-testnet.sh \
+  --bundle-url https://github.com/valargroup/kresko/releases/download/v0.1.0/nu7-join-bundle.tar.gz</code></pre>
+                  <button class="copy" type="button" data-copy="join-observer" aria-label="Copy observer command" title="Copy"></button>
+                </div>
+              </div>
+            </li>
+            <li class="join-step">
+              <div class="join-step-body">
+                <h3>Mining mode</h3>
+                <p class="note">Same as above, plus <code>--mine</code> to mine blocks.</p>
+                <div class="code-block">
+                  <pre><code id="join-mining">bash join-nu7-testnet.sh \
+  --bundle-url https://github.com/valargroup/kresko/releases/download/v0.1.0/nu7-join-bundle.tar.gz --mine</code></pre>
+                  <button class="copy" type="button" data-copy="join-mining" aria-label="Copy mining command" title="Copy"></button>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </article>
+
+        <article class="panel wide">
+          <div class="panel-title">
+            <h2>Resources</h2>
+          </div>
+          <p class="body-copy">
+            Explore the chain, point your wallet at a public endpoint, or grab
+            testnet coins to start sending.
+          </p>
+          <div class="links">
+            <div class="link-box">
+              <a href="<%= Routes.page_path(@conn, :index) %>">Block explorer</a>
+              <p>Blocks, transactions, addresses, mempool, and live chain metrics.</p>
+            </div>
+            <div class="link-box">
+              <a href="<%= Routes.page_path(@conn, :rpc) %>">Public RPC endpoints</a>
+              <p>JSON-RPC endpoints you can point wallets and tooling at.</p>
+            </div>
+            <div class="link-box">
+              <a href="<%= Routes.faucet_path(@conn, :index) %>">Testnet faucet</a>
+              <p>Request testnet ZEC to start sending transactions.</p>
+            </div>
+            <div class="link-box">
+              <a href="https://github.com/valargroup/zebra/tree/evan/nu7/testnet" target="_blank" rel="noreferrer">Source code</a>
+              <p>The Zebra fork running this testnet (<code>evan/nu7/testnet</code>).</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <footer class="foot">
+        <span>NU7-rc0 testnet · Zcash · operated by Valar Group</span>
+        <span>&copy; <%= DateTime.utc_now().year %> · ephemeral two-week testnet</span>
+      </footer>
+    </main>
+
+    <script>
+      var copyIcon =
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+      var checkIcon =
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>';
+
+      function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+          return navigator.clipboard.writeText(text);
+        }
+        return new Promise(function (resolve, reject) {
+          var textarea = document.createElement("textarea");
+          textarea.value = text;
+          textarea.setAttribute("readonly", "");
+          textarea.style.position = "fixed";
+          textarea.style.top = "-1000px";
+          document.body.appendChild(textarea);
+          textarea.select();
+          var ok = false;
+          try {
+            ok = document.execCommand("copy");
+          } finally {
+            textarea.remove();
+          }
+          ok ? resolve() : reject(new Error("copy failed"));
+        });
+      }
+
+      Array.prototype.forEach.call(
+        document.querySelectorAll("[data-copy]"),
+        function (button) {
+          button.innerHTML = copyIcon;
+          button.addEventListener("click", function () {
+            var code = document.getElementById(button.getAttribute("data-copy"));
+            if (!code) return;
+            copyText(code.textContent.trim()).then(
+              function () {
+                button.innerHTML = checkIcon;
+                button.classList.add("done");
+                button.title = "Copied";
+                setTimeout(function () {
+                  button.innerHTML = copyIcon;
+                  button.classList.remove("done");
+                  button.title = "Copy";
+                }, 1400);
+              },
+              function () {
+                button.title = "Copy failed";
+              }
+            );
+          });
+        }
+      );
+    </script>
+  </body>
+</html>

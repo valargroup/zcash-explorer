@@ -2,6 +2,13 @@ defmodule ZcashExplorerWeb.PageController do
   use ZcashExplorerWeb, :controller
   alias ZcashExplorer.RpcEndpoints
 
+  def landing(conn, _params) do
+    conn
+    |> put_root_layout(false)
+    |> put_layout(false)
+    |> render("landing.html", page_title: "NU7-rc0 Testnet")
+  end
+
   def index(conn, _params) do
     render(conn, "index.html", page_title: "Zcash Explorer - Search the Zcash Blockchain")
   end

@@ -18,7 +18,7 @@ defmodule ZcashExplorerWeb.AddressView do
       |> maybe_add_param("cursor", cursor)
       |> URI.encode_query()
 
-    "/address/#{address}?#{params}"
+    "/explorer/address/#{address}?#{params}"
   end
 
   defp maybe_add_param(params, _key, nil), do: params
