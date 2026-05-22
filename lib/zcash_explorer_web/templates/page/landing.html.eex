@@ -684,10 +684,6 @@
               <p>JSON-RPC endpoints you can point wallets and tooling at.</p>
             </div>
             <div class="link-box">
-              <a href="<%= Routes.faucet_path(@conn, :index) %>">Testnet faucet</a>
-              <p>Request testnet ZEC to start sending transactions.</p>
-            </div>
-            <div class="link-box">
               <a href="https://github.com/valargroup/zebra/tree/evan/nu7/testnet" target="_blank" rel="noreferrer">Source code</a>
               <p>The Zebra fork running this testnet (<code>evan/nu7/testnet</code>).</p>
             </div>
@@ -697,7 +693,7 @@
 
       <footer class="foot">
         <span>NU7-rc0 testnet · Zcash</span>
-        <span>&copy; <%= DateTime.utc_now().year %> · ephemeral two-week testnet</span>
+        <span>Ephemeral two-week testnet</span>
       </footer>
     </main>
 
