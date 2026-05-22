@@ -696,7 +696,7 @@
       </section>
 
       <footer class="foot">
-        <span>NU7-rc0 testnet · Zcash · operated by Valar Group</span>
+        <span>NU7-rc0 testnet · Zcash</span>
         <span>&copy; <%= DateTime.utc_now().year %> · ephemeral two-week testnet</span>
       </footer>
     </main>
